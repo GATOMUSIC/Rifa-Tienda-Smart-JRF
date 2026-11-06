@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gran Rifa de los 5,000 Boletos - Progreso Oficial</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        body { background: var(--background); color: var(--text); padding: 20px; line-height: 1.5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 30px 20px; border-radius: 16px; }
+        header h1 { font-size: 24px; margin-bottom: 10px; }
+        header p { font-size: 14px; opacity: 0.9; }
+        .progress-card { background: var(--surface); padding: 25px; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 30px; text-align: center; }
+        .progress-label { font-size: 14px; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 10px; }
+        .progress-percentage { font-size: 48px; font-weight: 800; color: var(--primary); margin-bottom: 15px; }
+        .progress-bar-container { background: #e2e8f0; height: 16px; border-radius: 8px; overflow: hidden; margin-bottom: 15px; }
+        .progress-bar { background: linear-gradient(90deg, var(--primary), var(--success)); height: 100%; width: 0%; transition: width 0.5s ease-out; }
+        .status-badge { display: inline-block; background: #f1f5f9; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; color: var(--text-light); }
+        .prizes-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 30px; }
+        @media(min-width: 600px) { .prizes-grid { grid-template-columns: repeat(2, 1fr); } }
+        .prize-card { background: var(--surface); border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .prize-card.featured { grid-column: 1 / -1; border: 2px solid #fbbf24; background: #fffdf5; }
+        .prize-img-placeholder { height: 180px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 50px; border-bottom: 1px solid #e2e8f0; }
+        .prize-info { padding: 20px; flex-grow: 1; }
+        .prize-rank { font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-bottom: 8px; }
+        .featured .prize-rank { background: #fef3c7; color: #92400e; }
+        .second .prize-rank { background: #e0f2fe; color: #0369a1; }
+        .third .prize-rank { background: #f3e8ff; color: #6b21a8; }
+        .tv-pool .prize-rank { background: #dcfce7; color: #166534; }
+        .prize-title { font-size: 18px; font-weight: 700; margin-bottom: 5px; }
+        .prize-desc { font-size: 13px; color: var(--text-light); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gran Rifa de los 5,000 Boletos</h1>
+            <p>Sorteo Oficial — Estado y Progreso de Ventas en Vivo</p>
+        </header>
+
+        <div class="progress-card">
+            <div class="progress-label">Progreso Global de la Rifa</div>
+            <div class="progress-percentage" id="progressPercentage">0.0%</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="status-badge" id="statusMessage">Cargando progreso...</div>
+        </div>
+
+        <h2 style="margin-bottom: 15px; font-size: 18px;">Catálogo Oficial de Premios</h2>
+        <div class="prizes-grid">
+            <div class="prize-card featured">
+                <div class="prize-img-placeholder">🛵</div>
+                <div class="prize-info">
+                    <span class="prize-rank">1er Premio Principal</span>
+                    <h3 class="prize-title">Pasola Sanyan 2026 (150 cc)</h3>
+                    <p class="prize-desc">La pasola del año lista para rodar, con motor de alta eficiencia de 150cc y diseño moderno.</p>
+                </div>
+            </div>
+
+            <div class="prize-card second">
+                <div class="prize-img-placeholder">📱</div>
+                <div class="prize-info">
+                    <span class="prize-rank">2do Premio</span>
+                    <h3 class="prize-title">iPhone 14</h3>
+                    <p class="prize-desc">Smartphone de última generación con sistema de cámara avanzada y rendimiento impecable.</p>
+                </div>
+            </div>
+
+            <div class="prize-card third">
+                <div class="prize-img-placeholder">💻</div>
+                <div class="prize-info">
+                    <span class="prize-rank">3er Premio</span>
+                    <h3 class="prize-title">Laptop Ejecutiva</h3>
+                    <p class="prize-desc">Computadora portátil de alto rendimiento, ideal para productividad, estudios o trabajo.</p>
+                </div>
+            </div>
+
+            <div class="prize-card tv-pool">
+                <div class="prize-img-placeholder">📺</div>
+                <div class="prize-info">
+                    <span class="prize-rank">Premios Especiales</span>
+                    <h3 class="prize-title">5 Smart TVs de 43 pulgadas</h3>
+                    <p class="prize-desc">Cinco televisores inteligentes de alta definición para repartir entre cinco ganadores adicionales.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT ENTRE LAS COMILLAS SI USAS LA BASE DE DATOS
+        const WEB_APP_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI";
+        const TOTAL_BOLETOS = 5000;
+        
+        async function actualizarProgreso() {
+            let vendidos = 0;
+
+            if (WEB_APP_URL !== "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI") {
+                try {
+                    let response = await fetch(WEB_APP_URL);
+                    let datos = await response.json();
+                    datos.forEach(r => vendidos += parseInt(r.totalBoletos || 0));
+                } catch (e) {
+                    console.error("Error cargando base de datos remota, usando local", e);
+                }
+            } else {
+                let registros = JSON.parse(localStorage.getItem('rifa_registros')) || [];
+                registros.forEach(r => vendidos += parseInt(r.totalBoletos || 0));
+            }
+
+            let porcentaje = ((vendidos / TOTAL_BOLETOS) * 100).toFixed(1);
+            
+            document.getElementById('progressPercentage').innerText = `${porcentaje}%`;
+            document.getElementById('progressBar').style.width = `${porcentaje}%`;
+
+            let msgElement = document.getElementById('statusMessage');
+            if (vendidos >= TOTAL_BOLETOS) {
+                msgElement.innerText = "¡100% Vendido! Preparando fecha del sorteo oficial.";
+                msgElement.style.background = "#dcfce7";
+                msgElement.style.color = "#15803d";
+            } else {
+                msgElement.innerText = `El sorteo se activará automáticamente al vender el 100% (${vendidos.toLocaleString()} de 5,000 boletos vendidos)`;
+            }
+        }
+
+        window.onload = actualizarProgreso;
+    </script>
+</body>
+</html>
