@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración - Control de Boletos</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --success: #166534;
+            --danger: #991b1b;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --border: #cbd5e1;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        body { background: var(--background); padding: 20px; color: #334155; }
+        .wrapper { max-width: 1000px; margin: 0 auto; }
+        header { margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-size: 22px; color: var(--primary); }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media(min-width: 768px) { .grid { grid-template-columns: 1fr 2fr; } }
+        .card { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .card h2 { font-size: 16px; margin-bottom: 15px; color: var(--primary); border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; }
+        .hint { font-size: 11px; color: #64748b; margin-top: 4px; display: block; }
+        button { background: var(--primary); color: white; border: none; padding: 11px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; }
+        .btn-excel { background: #15803d; width: auto; margin-bottom: 15px; float: right; color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; cursor: pointer; border: none;}
+        table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        th { background: #f8fafc; padding: 12px; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; }
+        .stats { display: flex; gap: 15px; margin-bottom: 15px; }
+        .stat-box { flex: 1; background: #f8fafc; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid #e2e8f0; }
+        .stat-val { font-size: 18px; font-weight: bold; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <h1>Panel Contable Privado</h1>
+            <a href="index.html" target="_blank" style="font-size:13px; color:var(--primary); font-weight:600;">Ver Vista de Clientes ↗</a>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Registrar Venta</h2>
+                <div class="stats">
+                    <div class="stat-box"><div class="stat-val" id="statVendidos">0</div><div style="font-size:11px;">Boletos</div></div>
+                    <div class="stat-box"><div class="stat-val" id="statPorcentaje">0%</div><div style="font-size:11px;">Avance</div></div>
+                </div>
+                <form id="registroForm">
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <input type="text" id="cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Boletos Asignados</label>
+                        <input type="text" id="boletos" placeholder="Ej. 1-10, 450" required>
+                        <span class="hint">Usa guión para rangos y comas para separar.</span>
+                    </div>
+                    <button type="submit">Guardar Registro</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <button class="btn-excel" onclick="exportarExcel()">📊 Exportar a Excel</button>
+                <h2>Transacciones Realizadas</h2>
+                <table id="tablaRegistros">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Cant.</th>
+                            <th>Boletos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT ENTRE LAS COMILLAS SI USAS LA BASE DE DATOS
+        const WEB_APP_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI";
+        const TOTAL_MAX = 5000;
+
+        document.getElementById('registroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const cliente = document.getElementById('cliente').value.trim();
+            const inputBoletos = document.getElementById('boletos').value.trim();
+            let boletosProcesados = [];
+            
+            let segmentos = inputBoletos.split(',');
+            for(let seg of segmentos) {
+                seg = seg.trim();
+                if(seg.includes('-')) {
+                    let limites = seg.split('-');
+                    let inicio = parseInt(limites[0]);
+                    let fin = parseInt(limites[1]);
+                    for(let i = inicio; i <= fin; i++) { if(i>=1 && i<=TOTAL_MAX) boletosProcesados.push(i); }
+                } else {
+                    let num = parseInt(seg);
+                    if(num>=1 && num<=TOTAL_MAX) boletosProcesados.push(num);
+                }
+            }
+            boletosProcesados = [...new Set(boletosProcesados)].sort((a,b)=>a-b);
+
+            const nuevoRegistro = {
+                fecha: new Date().toLocaleDateString(),
+                cliente: cliente,
+                totalBoletos: boletosProcesados.length,
+                listaBoletos: boletosProcesados
+            };
+
+            if (WEB_APP_URL !== "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI") {
+                await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(nuevoRegistro) });
+            } else {
+                let actuales = JSON.parse(localStorage.getItem('rifa_registros')) || [];
+                actuales.push(nuevoRegistro);
+                localStorage.setItem('rifa_registros', JSON.stringify(actuales));
+            }
+            
+            document.getElementById('registroForm').reset();
+            cargarDatos();
+        });
+
+        async function cargarDatos() {
+            let registros = [];
+            if (WEB_APP_URL !== "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI") {
+                let response = await fetch(WEB_APP_URL);
+                registros = await response.json();
+            } else {
+                registros = JSON.parse(localStorage.getItem('rifa_registros')) || [];
+            }
+
+            let tbody = document.getElementById('tablaBody');
+            tbody.innerHTML = '';
+            let totalVendidos = 0;
+
+            registros.forEach(r => {
+                totalVendidos += parseInt(r.totalBoletos);
+                let tr = document.createElement('tr');
+                tr.innerHTML = `<td>${r.fecha}</td><td><b>${r.cliente}</b></td><td>${r.totalBoletos}</td><td style="color:#2563eb;">${r.listaBoletos.join(', ')}</td>`;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('statVendidos').innerText = totalVendidos;
+            document.getElementById('statPorcentaje').innerText = `${((totalVendidos / TOTAL_MAX) * 100).toFixed(1)}%`;
+        }
+
+        function exportarExcel() {
+            let registros = JSON.parse(localStorage.getItem('rifa_registros')) || [];
+            let csv = "data:text/csv;charset=utf-8,\uFEFFFecha,Cliente,Cantidad,Boletos\n";
+            registros.forEach(r => { csv += `"${r.fecha}","${r.cliente}","${r.totalBoletos}","${r.listaBoletos.join(' ')}"\n`; });
+            let encoded = encodeURI(csv);
+            let link = document.createElement("a");
+            link.setAttribute("href", encoded);
+            link.setAttribute("download", "Rifa_Contabilidad.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = cargarDatos;
+    </script>
+</body>
+</html>
