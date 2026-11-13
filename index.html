@@ -44,8 +44,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>Gran Rifa de los 5,000 Boletos</h1>
-            <p>Sorteo Oficial — Estado y Progreso de Ventas en Vivo</p>
+            <h1>Gran Rifa Tienda Smart JRF</h1>
+            <p>Sorteo Oficial — Estado y Progreso en Vivo</p>
         </header>
 
         <div class="progress-card">
@@ -60,9 +60,9 @@
         <h2 style="margin-bottom: 15px; font-size: 18px;">Catálogo Oficial de Premios</h2>
         <div class="prizes-grid">
             <div class="prize-card featured">
-               <div class="prize-img-placeholder" style="padding:0;">
-    <img src="pasola.jpg" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Pasola Sanyan 2026">
-</div>
+                <div class="prize-img-placeholder" style="padding:0;">
+                    <img src="pasola.jpg" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Pasola Sanyan 2026">
+                </div>
                 <div class="prize-info">
                     <span class="prize-rank">1er Premio Principal</span>
                     <h3 class="prize-title">Pasola Sanyan 2026 (150 cc)</h3>
@@ -71,9 +71,9 @@
             </div>
 
             <div class="prize-card second">
-               <div class="prize-img-placeholder" style="padding:0;">
-    <img src="iphone.webp" style="width:100%; height:100%; object-fit:cover; display:block;" alt="iPhone 14">
-</div>
+                <div class="prize-img-placeholder" style="padding:0;">
+                    <img src="iphone.webp" style="width:100%; height:100%; object-fit:cover; display:block;" alt="iPhone 14">
+                </div>
                 <div class="prize-info">
                     <span class="prize-rank">2do Premio</span>
                     <h3 class="prize-title">iPhone 14</h3>
@@ -83,9 +83,8 @@
 
             <div class="prize-card third">
                 <div class="prize-img-placeholder" style="padding:0;">
-    <img src="pc.png" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Laptop">
-</div>
-
+                    <img src="pc.png" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Laptop">
+                </div>
                 <div class="prize-info">
                     <span class="prize-rank">3er Premio</span>
                     <h3 class="prize-title">Laptop Ejecutiva</h3>
@@ -95,9 +94,8 @@
 
             <div class="prize-card tv-pool">
                 <div class="prize-img-placeholder" style="padding:0;">
-    <img src="tv.jpg" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Smart TV 43">
-</div>
-
+                    <img src="tv.jpg" style="width:100%; height:100%; object-fit:cover; display:block;" alt="Smart TV 43">
+                </div>
                 <div class="prize-info">
                     <span class="prize-rank">Premios Especiales</span>
                     <h3 class="prize-title">5 Smart TVs de 43 pulgadas</h3>
@@ -110,7 +108,7 @@
     <script>
         // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT ENTRE LAS COMILLAS SI USAS LA BASE DE DATOS
         const WEB_APP_URL = "TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI";
-        const TOTAL_BOLETOS = 5000;
+        const META_TOTAL = 5000;
         
         async function actualizarProgreso() {
             let vendidos = 0;
@@ -128,18 +126,19 @@
                 registros.forEach(r => vendidos += parseInt(r.totalBoletos || 0));
             }
 
-            let porcentaje = ((vendidos / TOTAL_BOLETOS) * 100).toFixed(1);
+            let porcentaje = ((vendidos / META_TOTAL) * 100).toFixed(1);
+            if (porcentaje > 100) porcentaje = "100.0";
             
             document.getElementById('progressPercentage').innerText = `${porcentaje}%`;
             document.getElementById('progressBar').style.width = `${porcentaje}%`;
 
             let msgElement = document.getElementById('statusMessage');
-            if (vendidos >= TOTAL_BOLETOS) {
-                msgElement.innerText = "¡100% Vendido! Preparando fecha del sorteo oficial.";
+            if (vendidos >= META_TOTAL) {
+                msgElement.innerText = "¡100% Completado! Preparando fecha del sorteo oficial.";
                 msgElement.style.background = "#dcfce7";
                 msgElement.style.color = "#15803d";
             } else {
-                msgElement.innerText = `El sorteo se activará automáticamente al vender el 100% (${vendidos.toLocaleString()} de 5,000 boletos vendidos)`;
+                msgElement.innerText = "El sorteo se activará automáticamente al alcanzar el 100%";
             }
         }
 
